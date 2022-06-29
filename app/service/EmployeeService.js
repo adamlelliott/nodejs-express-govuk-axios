@@ -5,15 +5,34 @@ axios.defaults.baseURL = process.env.API_URL;
 URL = '/hr/employee/'
 
 module.exports.createEmployee = async function (employee) {
-    const response = await axios.post(URL, employee)
+    try {
+        const response = await axios.post(URL, employee)
 
-    return response.data
+        return response.data
+    } catch(e) {
+        if (e.response.status == 400) {
+            return new Error('Invalid data')
+        } else {
+            return new Error('Could not create employee')
+        }
+    }
 }
 
 module.exports.getEmployee = async function (id) {
-    const response = await axios.get(URL + id)
+    if (!id) {
+        return new Error('Employee ID cannot be null')
+    }
+    try {
+        const response = await axios.get(URL + id)
 
-    return response.data
+        return response.data
+    } catch(e) {
+        if (e.response.status == 400) {
+            return new Error('User does not exist')
+        } else {
+            return new Error('Failed to get employee')
+        }
+    }
 }
 
 module.exports.getEmployees = async function () {
